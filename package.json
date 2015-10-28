@@ -1,0 +1,49 @@
+{
+  "name": "three-png-stream",
+  "version": "1.0.0",
+  "description": "streams ThreeJS render target pixel data",
+  "main": "index.js",
+  "license": "MIT",
+  "author": {
+    "name": "Matt DesLauriers",
+    "email": "dave.des@gmail.com",
+    "url": "https://github.com/mattdesl"
+  },
+  "dependencies": {
+    "png-stream": "^1.0.4",
+    "gl-pixel-stream": "^1.0.1",
+    "object-assign": "^4.0.1"
+  },
+  "devDependencies": {
+    "hihat": "^2.5.0",
+    "snowden": "^1.0.1",
+    "three": "^0.69.0",
+    "three-simplicial-complex": "^69.0.6"
+  },
+  "scripts": {
+    "dev": "hihat demo.js --node --frame=512,512",
+    "start": "NODE_ENV=production hihat demo.js --node --exec"
+  },
+  "keywords": [
+    "fbo",
+    "export",
+    "save",
+    "image",
+    "threejs",
+    "three",
+    "three.js",
+    "pixel",
+    "pixels",
+    "rgb",
+    "rgba",
+    "stream"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Jam3/three-png-stream.git"
+  },
+  "homepage": "https://github.com/Jam3/three-png-stream",
+  "bugs": {
+    "url": "https://github.com/Jam3/three-png-stream/issues"
+  }
+}
