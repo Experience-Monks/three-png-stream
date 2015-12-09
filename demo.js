@@ -74,6 +74,6 @@ function save () {
     }
   })
 
-  pngStream(renderer.getContext(), target)
+  pngStream(renderer, target)
     .pipe(output)
 }

@@ -22,7 +22,7 @@
   },
   "scripts": {
     "dev": "hihat demo.js --node --frame=512,512",
-    "start": "NODE_ENV=production hihat demo.js --node --exec"
+    "start": "NODE_ENV=production hihat demo.js --node --exec -- --no-debug"
   },
   "keywords": [
     "fbo",

@@ -2,11 +2,22 @@ var PNGEncoder = require('png-stream/encoder')
 var glPixelStream = require('gl-pixel-stream')
 var assign = require('object-assign')
 
+var versionError = 'Could not find __webglFramebuffer on the target.\n' +
+  'Ensure you are using r69-r71 or r74+ of ThreeJS, and that you have\n' +
+  'already rendered to your WebGLRenderTarget like so:\n' +
+  '   renderer.render(scene, camera, target);'
+
 module.exports = threePixelStream
-function threePixelStream (gl, target, opt) {
+function threePixelStream (renderer, target, opt) {
   if (typeof THREE === 'undefined') throw new Error('THREE is not defined in global scope')
-  if (!gl) throw new TypeError('Must specify a gl context.\nYou can use "renderer.getContext()"')
-  if (!target) throw new TypeError('Must specify WebGLRenderTarget,\npopulated with the contents for export.')
+  if (!renderer || typeof renderer.getContext !== 'function') {
+    throw new TypeError('Must specify a ThreeJS WebGLRenderer.')
+  }
+
+  var gl = renderer.getContext()
+  if (!target) {
+    throw new TypeError('Must specify WebGLRenderTarget,\npopulated with the contents for export.')
+  }
   
   opt = opt || {}
   var format = opt.format
@@ -19,11 +30,14 @@ function threePixelStream (gl, target, opt) {
   var glFormat = getGLFormat(gl, format)
   var shape = [ target.width, target.height ]
   
-  if (!target.__webglFramebuffer) {
-    throw new Error('Could not find __webglFramebuffer on the target.\n' +
-        'Ensure you are using r69-r71 of ThreeJS, and that you have\n' +
-        'already rendered to your WebGLRenderTarget like so:\n' +
-        '   renderer.render(scene, camera, target);')
+  var framebuffer = target.__webglFramebuffer
+  if (!framebuffer) {
+    if (!renderer.properties) {
+      throw new Error(versionError)
+    }
+    var props = renderer.properties.get(target);
+    if (!props) throw new Error(versionError)
+    framebuffer = props.__webglFramebuffer
   }
   
   opt = assign({
@@ -36,7 +50,7 @@ function threePixelStream (gl, target, opt) {
     colorSpace: getColorSpace(gl, glFormat)
   })
   
-  var stream = glPixelStream(gl, target.__webglFramebuffer, shape, opt)
+  var stream = glPixelStream(gl, framebuffer, shape, opt)
   stream.pipe(encoder)
   return encoder
 }
