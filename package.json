@@ -15,14 +15,14 @@
     "object-assign": "^4.0.1"
   },
   "devDependencies": {
-    "hihat": "^2.5.0",
+    "devtool": "^1.7.6",
     "snowden": "^1.0.1",
-    "three": "^0.69.0",
+    "three": "^0.71.1",
     "three-simplicial-complex": "^69.0.6"
   },
   "scripts": {
-    "dev": "hihat demo.js --node --frame=512,512",
-    "start": "NODE_ENV=production hihat demo.js --node --exec -- --no-debug"
+    "dev": "NODE_ENV=development devtool demo.js -c -s",
+    "start": "devtool demo.js -c -q -h"
   },
   "keywords": [
     "fbo",

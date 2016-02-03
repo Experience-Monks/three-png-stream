@@ -50,7 +50,7 @@ function createScene () {
 
 // for visualizing the scene during development
 function debugRender () {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'development') {
     document.body.appendChild(renderer.domElement)
     document.body.style.margin = '0'
     document.body.style.overflow = 'hidden'
@@ -69,7 +69,7 @@ function save () {
   // when file writing is done
   output.on('close', function () {
     console.log('Saved %dx%d image to %s', target.width, target.height, file)
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV !== 'development') {
       window.close()
     }
   })

@@ -8,6 +8,8 @@ The following transparent PNG image was generated with [demo.js](./demo.js), whi
 
 <img src="snowden.png" width="50%" />
 
+> *Note:* This only works on Three r69-71 and 74+.
+
 ## Install
 
 ```sh
