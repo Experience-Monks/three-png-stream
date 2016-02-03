@@ -27,8 +27,7 @@ renderer.render(scene, camera, target)
 
 // now you can write it to a new PNG file
 var output = fs.createWriteStream('image.png')
-var gl = renderer.getContext()
-pngStream(gl, target)
+pngStream(renderer, target)
   .pipe(output)
 ```
 
@@ -36,11 +35,11 @@ pngStream(gl, target)
 
 [![NPM](https://nodei.co/npm/three-png-stream.png)](https://www.npmjs.com/package/three-png-stream)
 
-#### `stream = pngStream(gl, target, [opt])`
+#### `stream = pngStream(renderer, target, [opt])`
 
 Creates a new `stream` which reads pixel data from `target` in chunks, writing PNG encoded data.
 
-- `gl` is the WebGLRenderingContext, from `renderer.getContext()`
+- `renderer` is the WebGLRenderer of ThreeJS
 - `target` is the WebGLRenderTarget; you must render to it first!
 - `opt` are some optional settings:
   - `chunkSize` number of rows of pixels to read per chunk, default 128
