@@ -1,6 +1,6 @@
 {
   "name": "three-png-stream",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "streams ThreeJS render target pixel data",
   "main": "index.js",
   "license": "MIT",
