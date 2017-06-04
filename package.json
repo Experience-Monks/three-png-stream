@@ -10,18 +10,39 @@
     "url": "https://github.com/mattdesl"
   },
   "dependencies": {
-    "png-stream": "^1.0.4",
     "gl-pixel-stream": "^1.0.1",
-    "object-assign": "^4.0.1"
+    "multipart-form-stream": "^1.0.0",
+    "object-assign": "^4.0.1",
+    "png-stream": "^1.0.4"
   },
   "devDependencies": {
+    "axios": "^0.16.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^7.3.0",
+    "body-parser": "^1.17.2",
+    "budo": "^10.0.3",
+    "concat-stream": "^1.6.0",
     "devtool": "^1.7.6",
+    "envify": "^4.0.0",
+    "form-data": "^2.1.4",
+    "from2-string": "^1.1.0",
+    "get-ports": "^1.0.3",
+    "got": "^7.0.0",
+    "internal-ip": "^1.2.0",
+    "ora": "^1.2.0",
+    "pretty-bytes": "^4.0.2",
+    "pretty-ms": "^2.1.0",
+    "progress-stream": "^2.0.0",
+    "shoe": "0.0.15",
+    "simple-get": "^2.6.0",
     "snowden": "^1.0.1",
     "three": "^0.71.1",
-    "three-simplicial-complex": "^69.0.6"
+    "three-simplicial-complex": "^69.0.6",
+    "websocket-stream": "^5.0.0"
   },
   "scripts": {
     "dev": "NODE_ENV=development devtool demo.js -c -s",
+    "example": "node example/server.js example/client.js",
     "start": "devtool demo.js -c -q -h"
   },
   "keywords": [
