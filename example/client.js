@@ -1,11 +1,12 @@
 global.THREE = require('three')
 
-const get = require('simple-get');
+const assign = require('object-assign')
+const qs = require('query-string')
 const pngStream = require('../')
-const shoe = require('shoe')
 const createComplex = require('three-simplicial-complex')(THREE)
 const snowden = require('snowden')
 const wsStream = require('websocket-stream')
+const noop = () => {}
 
 // Our WebGL renderer with alpha and device-scaled
 const renderer = new THREE.WebGLRenderer({
@@ -23,19 +24,13 @@ const scene = createScene()
 
 // output dimensions
 const gl = renderer.getContext()
-const maxSize = Math.min(
-  gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),
-  gl.getParameter(gl.MAX_TEXTURE_SIZE)
-)
+const maxSize = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)
 
-const aspect = 1200 / 1920;
-const outputWidth = 9000;
-const outputHeight = Math.floor(outputWidth / aspect);
-// const outputWidth = maxSize
-// const outputHeight = maxSize
+const outputWidth = 2048
+const outputHeight = 2048
 
-console.log('Max size:', maxSize)
-console.log('Output:', outputWidth, 'x', outputHeight)
+console.log('Max RenderBuffer Size:', maxSize)
+console.log('Output: %dx%d', outputWidth, outputHeight)
 
 // output framebuffer
 const target = new THREE.WebGLRenderTarget(outputWidth, outputHeight)
@@ -43,18 +38,45 @@ target.generateMipmaps = false
 target.minFilter = THREE.LinearFilter
 target.format = THREE.RGBAFormat
 
+assign(document.body.style, {
+  margin: '0',
+  cursor: 'pointer',
+  overflow: 'hidden'
+})
+
 document.body.appendChild(renderer.domElement)
-document.body.style.margin = '0'
-document.body.style.overflow = 'hidden'
 
 resize()
+window.addEventListener('resize', resize)
+
+var loader = document.createElement('div')
+assign(loader.style, {
+  width: '100%',
+  height: '100%',
+  background: 'rgba(0, 0, 0, 0.5)',
+  position: 'absolute',
+  left: '0',
+  color: 'white',
+  padding: '10px',
+  font: '14px Helvetica, sans-serif',
+  color: 'white',
+  top: '0',
+  display: 'none'
+})
+document.body.appendChild(loader)
 
 // trigger a save on space key
-window.addEventListener('keydown', ev => {
-  if (ev.keyCode === 32) {
-    ev.preventDefault()
-    save()
-  }
+var saving = false
+renderer.domElement.addEventListener('click', ev => {
+  if (saving) return
+  loader.innerText = 'Saving...'
+  loader.style.display = 'block'
+  saving = true
+  ev.preventDefault()
+  save(() => {
+    loader.style.display = 'none'
+    saving = false
+  })
 })
 
 function createScene () {
@@ -83,34 +105,51 @@ function resize () {
   renderer.render(scene, camera)
 }
 
-function save () {
+function save (cb = noop) {
   // draw scene into render target
   camera.aspect = outputWidth / outputHeight
   camera.updateProjectionMatrix()
-  renderer.setSize(outputWidth, outputHeight)
-  renderer.setPixelRatio(1)
-  renderer.render(scene, camera, target)
+  console.log('Rendering...')
+  renderer.render(scene, camera, target, true)
+  gl.finish()
+  renderer.setRenderTarget(null)
 
   resize()
   console.log('Saving PNG...')
 
-  const stream = wsStream(getWebsocketHost())
-  stream.on('error', err => {
-    console.error(err)
+  // pipe output into websocket
+  const imageStream = pngStream(renderer, target, {
+    chunkSize: 1024,
+    onProgress: (ev) => {
+      const { current, total } = ev
+      loader.innerText = `Writing chunk ${current} of ${total}`
+      console.log(loader.innerText)
+    }
   })
 
-  // pipe output into websocket
-  pngStream(renderer, target, {
-    chunkSize: 2048
-  }).pipe(stream)
+  const url = getURL({
+    file: 'snowden.png'
+  })
+  const stream = wsStream(url)
+  stream.on('error', err => {
+    console.error(err)
+    loader.innerText = err.message
+    cb()
+    cb = noop
+  }).on('finish', () => {
+    cb()
+    cb = noop
+  })
+  imageStream.on('error', err => console.error(err))
+  imageStream.pipe(stream)
 }
 
-function getWebsocketHost () {
+function getURL (opt = {}) {
   const protocol = document.location.protocol
   const hostname = document.location.hostname
   const port = process.env.IMAGE_SERVER_PORT
   const host = hostname + ':' + port
   const isSSL = /^https:/i.test(protocol)
   const wsProtocol = isSSL ? 'wss://' : 'ws://'
-  return wsProtocol + host + '/save'
+  return wsProtocol + host + '/save?' + qs.stringify(opt)
 }

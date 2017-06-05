@@ -35,7 +35,7 @@ function threePixelStream (renderer, target, opt) {
     if (!renderer.properties) {
       throw new Error(versionError)
     }
-    var props = renderer.properties.get(target);
+    var props = renderer.properties.get(target)
     if (!props) throw new Error(versionError)
     framebuffer = props.__webglFramebuffer
   }
@@ -52,6 +52,9 @@ function threePixelStream (renderer, target, opt) {
   
   var stream = glPixelStream(gl, framebuffer, shape, opt)
   stream.pipe(encoder)
+  stream.on('error', function (err) {
+    encoder.emit('error', err)
+  })
   return encoder
 }
 

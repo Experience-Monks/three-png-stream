@@ -2,11 +2,11 @@
 
 [![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 
-Streams a PNG encoded pixels from a ThreeJS `WebGLRenderTarget`. This is done in chunks of `gl.readPixels`, using [gl-pixel-stream](https://github.com/Jam3/gl-pixel-stream), and works with render targets upwards of 10000x10000 pixels in Chrome (dependent on your GPU).
+Streams a PNG encoded pixels from a ThreeJS `WebGLRenderTarget`. This is done in chunks of `gl.readPixels`, using [gl-pixel-stream](https://github.com/Jam3/gl-pixel-stream), and works with render targets upwards of 10000x10000 pixels in Chrome (or more, depending on your GPU).
 
-The following transparent PNG image was generated with [demo.js](./demo.js), which uses [Electron](http://electron.atom.io/) and [hihat](https://github.com/Jam3/hihat). See [Running from Source](#running-from-source) for details.
+The following transparent PNG image was generated with ThreeJS on the client side using the [example/](./example) code. See [Running from Source](#running-from-source) for details.
 
-<img src="snowden.png" width="50%" />
+<img src="example/snowden.png" width="50%" />
 
 > *Note:* This only works on Three r69-71 and 74+.
 
@@ -48,6 +48,7 @@ Creates a new `stream` which reads pixel data from `target` in chunks, writing P
   - `flipY` whether to flip the output on the Y axis, default `true`
   - `format` a THREE texture format to use, defaults to the format in `target`
   - `stride` the number of channels per pixel, guessed from the format (default 4)
+  - `onProgress` the progress function for `gl-pixel-stream`, which has an event parameter with `current`, `total` and `bounds` for the current readPixel boudns
 
 ## Running From Source
 
@@ -59,17 +60,13 @@ cd three-png-stream
 npm install
 ```
 
-To run in "production" mode (headless, auto-quits). This will generate `snowden.png` in the current folder.
+Now run the following:
 
 ```sh
 npm run start
 ```
 
-To run in "development" mode. This will open a browser with DevTools and reload on `demo.js` file save.
-
-```sh
-npm run dev
-```
+And open the development server at [http://localhost:9966/](http://localhost:9966/). Once the model appears, click anywhere to save a new `snowden.png` to the example folder. You can also change the `outputWidth` and `outputHeight`, the max size is generally GPU-dependent. This is best used in Chrome.
 
 ## License
 
